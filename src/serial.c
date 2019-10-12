@@ -38,7 +38,7 @@ input :
 -------
 Df1_port   : string with the device to open (/dev/ttyS0, /dev/ttyS1,...)
 Df1_speed  : speed (baudrate)
-Df1_parity : 0=don't use parity, 1=use parity EVEN, -1 use parity ODD
+Df1_parity : 0=don't use parity, 1=use parity EVEN, 2=use parity ODD
 Df1_bit_l  : number of data bits : 7 or 8 	USE EVERY TIME 8 DATA BITS
 Df1_bit_s  : number of stop bits : 1 or 2    ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
@@ -145,7 +145,7 @@ int Df1_open_device(char Df1_port[20], int Df1_speed, int Df1_parity, int Df1_bi
      case 1:
         Df1_tio.c_cflag = Df1_tio.c_cflag | PARENB;
         break;
-     case -1:
+     case 2:
         Df1_tio.c_cflag = Df1_tio.c_cflag | PARENB | PARODD;
         break;
      case 0:

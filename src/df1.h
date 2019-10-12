@@ -14,7 +14,7 @@
  *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-// Version 1.0.0 	:23 Jan 2003
+// Version 1.1.0 	:12 Oct 2019
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -78,7 +78,7 @@ struct termios Df1_tio;							/* new serial port setting */
 
 //Server 
 #define BUFSIZE		20
-#define PORT		17560
+#define PORT		18000
 #define MAXCONN		5
 #define MAX_CLIENTS	10
 
@@ -87,7 +87,9 @@ struct termios Df1_tio;							/* new serial port setting */
 #ifdef DEBUG
 	#define MyLog printf
 #else
-	#define MyLog(m) syslog(LOG_NOTICE,m) 
+	#define MyLog(m, ...) do { \
+		syslog(LOG_NOTICE, m, ##__VA_ARGS__); \
+    }while(0)
 #endif
 //**********************************************************************
 

@@ -23,52 +23,64 @@ int Terminated=FALSE;
 void Termine (int sig);
 
 //******************** MAIN ************
-int main (void) 
+int main (int argc, char *argv[]) 
 {
 	openlog("DF1",LOG_NDELAY,LOG_DAEMON);
 	setlogmask(~LOG_MASK(LOG_DEBUG)); // no debug informations
+
+	if(argc != 6){
+		MyLog( "Usage: %s /dev/ttyxxx speed databits parity stopbits\n", argv[0]);
+		printf("Usage: %s /dev/ttyxxx speed databits parity stopbits\n", argv[0]);
+		return(-1);
+	}
+
+	int speed = atoi(argv[2]);
+	int databits = argv[3][1] - '0';
+	int parity = argv[4][1] - '0';
+	int stopbits = argv[5][1] - '0';
 	
 	signal(SIGTERM,Termine);
 	signal(SIGINT,Termine);
 	signal(SIGQUIT,Termine);
 	signal(SIGSEGV,Termine);
 	
-	if ((file=Df1_open_device ("/dev/ttyS0", 9600,0,8,1)) == -1)
-		{
-			MyLog("OpenCom Failed\n");
-			return (-1);
-		}
+//	if ((file=Df1_open_device ("/dev/ttyS0", 9600,0,8,1)) == -1)
+	if ((file=Df1_open_device (argv[1], speed, parity, databits, stopbits)) == -1)
+	{
+		MyLog("OpenCom Failed\n");
+		return (-1);
+	}
 
-	#ifndef DEBUG	
+#ifndef DEBUG	
 	switch (fork())
-		{
+	{
 		case -1:
-						syslog(LOG_NOTICE,"Erreur a la creation du Daemon");
-						//closelog;
-						exit(1);
+				syslog(LOG_NOTICE, "Error: creation df1 Daemon");
+				//closelog;
+				exit(1);
 		case 0:
-						setsid();
-						chdir("/");
-						umask(0);
-						close(0);
-						close(1);
-						close(2);
-						syslog(LOG_NOTICE,"Daemon OK");
-						if (file == -1)
-							{
-								syslog(LOG_NOTICE,"OpenCom Failed\n");
-								//closelog;
-								exit(2);
-							}
-							else 
-							{	
-	#endif
-					  server();	
-					  close (file);
-					  exit(0);
+				setsid();
+				chdir("/");
+				umask(0);
+				close(0);
+				close(1);
+				close(2);
+				syslog(LOG_NOTICE,"Daemon OK");
+				if (file == -1)
+				{
+					syslog(LOG_NOTICE,"OpenCom Failed\n");
+					//closelog;
+					exit(2);
+				}
+				else 
+				{	
+#endif
+					server();	
+					close (file);
+					exit(0);
 #ifndef DEBUG
-							}
-	default : exit(0);
+				}
+		default : exit(0);
 	}
 #endif	
 }
@@ -94,7 +106,4 @@ void Termine (int sig)
 					break;
 	}
 }
-
-
-
 

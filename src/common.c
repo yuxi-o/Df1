@@ -102,6 +102,6 @@ void print_symbol(byte c)
 		case DLE :
 			puts("DLE\n");
 			break;		
-		default : printf("??:%02X\n",c);
+		default : MyLog("Recv first byte:%02X\n",c);
 	}
 }

@@ -64,7 +64,6 @@ int send_DF1(TMsg Df1Data)
 	time_t time_start;
 	int nbr_NAK=0;
 	int nbr_ENQ=0;
-	//int x;
 	
 	//build message to send
 	bzero(&crcBuffer,sizeof(crcBuffer));
@@ -77,9 +76,10 @@ int send_DF1(TMsg Df1Data)
 	add_byte2buffer(&dataSend,ETX);	
 	add_data2buffer(&crcBuffer,&Df1Data,Df1Data.size+6);
 	add_word2buffer(&dataSend, compute_crc(&crcBuffer));
-	//for (x=0;x<dataSend.size;x++) {
-	//	printf("datasend %i=%2X\n",x,dataSend.data[x]);
-	//}
+	MyLog("------------------------------\n");
+	for (int x=0;x<dataSend.size;x++) {
+		MyLog("datasend %i=%2X\n",x,dataSend.data[x]);
+	}
 	//ready to send
 	do 
 	{	
