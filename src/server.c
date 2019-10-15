@@ -87,7 +87,7 @@ int server(void)
 				if( nb_lu > 0 ) {
 					message[nb_lu]='\0';
 					if ((error=read_socket(message,response))!=SUCCES) {
-						sprintf(response,"error :%d\n",error);
+						sprintf(response,"error:%d\n",error);
 					}
 					strcat(response,"\n");
 					write(fd, response, strlen(response));

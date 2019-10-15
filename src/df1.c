@@ -76,9 +76,9 @@ int send_DF1(TMsg Df1Data)
 	add_byte2buffer(&dataSend,ETX);	
 	add_data2buffer(&crcBuffer,&Df1Data,Df1Data.size+6);
 	add_word2buffer(&dataSend, compute_crc(&crcBuffer));
-	MyLog("------------------------------\n");
+	MyLog("----------------dataSend--------------\n");
 	for (int x=0;x<dataSend.size;x++) {
-		MyLog("datasend %i=%2X\n",x,dataSend.data[x]);
+		MyLog("%.2X ", dataSend.data[x]);
 	}
 	//ready to send
 	do 
@@ -149,9 +149,9 @@ int rcv_DF1(TMsg * Df1Data)
 			}
 			if (c==ETX)
 			{	
-            if (read_byte(&crcb1)!=SUCCES)
+				if (read_byte(&crcb1)!=SUCCES)
 					return error;
-            if (read_byte(&crcb2)!=SUCCES)
+				if (read_byte(&crcb2)!=SUCCES)
 					return error;
 
 				crc=bytes2word(crcb1,crcb2);
@@ -176,6 +176,10 @@ int rcv_DF1(TMsg * Df1Data)
 		}
 	} while (crcOK != TRUE);
 	memcpy(Df1Data,dataRcv.data,dataRcv.size);
+	MyLog("----------------dataRecv--------------\n");
+	for (int x=0; x<dataRcv.size; x++) {
+		MyLog("%.2X ", dataRcv.data[x]);
+	}
 	return error;			
 }
 

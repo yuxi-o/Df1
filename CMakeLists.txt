@@ -20,3 +20,8 @@ add_executable(
 	df1d
 	${source_files}
 )
+
+#set(CLIENT_LIST client/*)
+file(GLOB_RECURSE CLIENT_LIST client/*)
+add_executable(df1c ${CLIENT_LIST})
+

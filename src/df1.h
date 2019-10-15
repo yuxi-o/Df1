@@ -78,7 +78,7 @@ struct termios Df1_tio;							/* new serial port setting */
 
 //Server 
 #define BUFSIZE		20
-#define PORT		18000
+#define PORT		18111
 #define MAXCONN		5
 #define MAX_CLIENTS	10
 

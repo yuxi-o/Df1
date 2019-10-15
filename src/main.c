@@ -19,6 +19,7 @@
 extern word tns;
 int file;
 int Terminated=FALSE;
+int df1_mode = 0; // 0: full-duplex, 1: half-duplex  Only support full-duplex now.
 
 void Termine (int sig);
 
@@ -28,16 +29,16 @@ int main (int argc, char *argv[])
 	openlog("DF1",LOG_NDELAY,LOG_DAEMON);
 	setlogmask(~LOG_MASK(LOG_DEBUG)); // no debug informations
 
-	if(argc != 6){
-		MyLog( "Usage: %s /dev/ttyxxx speed databits parity stopbits\n", argv[0]);
-		printf("Usage: %s /dev/ttyxxx speed databits parity stopbits\n", argv[0]);
+	if(argc != 7){
+		MyLog( "Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", argv[0]);
+		printf("Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", argv[0]);
 		return(-1);
 	}
 
-	int speed = atoi(argv[2]);
-	int databits = argv[3][1] - '0';
-	int parity = argv[4][1] - '0';
-	int stopbits = argv[5][1] - '0';
+	int speed = atoi(argv[3]);
+	int databits = argv[4][1] - '0';
+	int parity = argv[5][1] - '0';
+	int stopbits = argv[6][1] - '0';
 	
 	signal(SIGTERM,Termine);
 	signal(SIGINT,Termine);
@@ -49,6 +50,10 @@ int main (int argc, char *argv[])
 	{
 		MyLog("OpenCom Failed\n");
 		return (-1);
+	}
+
+	if((strcasecmp("half", argv[2])) == 0){
+		df1_mode = 1;
 	}
 
 #ifndef DEBUG	
