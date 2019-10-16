@@ -16,6 +16,7 @@
 
 #include "df1.h"
 
+#define  DEFAULT_CONFIG_FILE	"/etc/df1d.conf"
 extern word tns;
 int file;
 int Terminated=FALSE;
@@ -23,22 +24,53 @@ int df1_mode = 0; // 0: full-duplex, 1: half-duplex  Only support full-duplex no
 
 void Termine (int sig);
 
+static int get_config(char *file, char *device, char *mode, int *speed, int *databits, int *parity, int *stopbits){
+	int fd = open(file, O_RDONLY);	
+	if(fd < 0){
+		return(-1);
+	}
+
+	char config_line[64];
+	read(fd, config_line, sizeof(config_line));
+	int num = sscanf(config_line, "%s%s%d%d%d%d", device, mode, speed, databits, parity, stopbits);
+	if(num != 6){
+		return (-1);
+	}
+
+	close(fd);
+	return 0;
+}
+
 //******************** MAIN ************
 int main (int argc, char *argv[]) 
 {
 	openlog("DF1",LOG_NDELAY,LOG_DAEMON);
 	setlogmask(~LOG_MASK(LOG_DEBUG)); // no debug informations
 
-	if(argc != 7){
+	if(!((argc == 7) || (argc == 1))){
 		MyLog( "Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", argv[0]);
-		printf("Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", argv[0]);
 		return(-1);
 	}
 
-	int speed = atoi(argv[3]);
-	int databits = argv[4][1] - '0';
-	int parity = argv[5][1] - '0';
-	int stopbits = argv[6][1] - '0';
+	int speed = 0, databits = 0, parity = 0, stopbits = 0, num = 0;
+	char device[32];
+	char mode[16];
+
+	if(argc == 7){
+		speed = atoi(argv[3]);
+		databits = argv[4][1] - '0';
+		parity = argv[5][1] - '0';
+		stopbits = argv[6][1] - '0';
+		strncpy(device, argv[1], sizeof(device));
+		strncpy(mode, argv[2], sizeof(mode));
+	} else {
+		if(0 != get_config(DEFAULT_CONFIG_FILE, device, mode, &speed, &databits, &parity, &stopbits))  
+		// || (0 != get_config(argv[2], device, mode, &speed, &databits, &parity, &stopbits) ) 
+		{
+			MyLog("Config file doesn't exist or format error.\n");
+			return(-1);
+		}
+	}
 	
 	signal(SIGTERM,Termine);
 	signal(SIGINT,Termine);
@@ -46,13 +78,13 @@ int main (int argc, char *argv[])
 	signal(SIGSEGV,Termine);
 	
 //	if ((file=Df1_open_device ("/dev/ttyS0", 9600,0,8,1)) == -1)
-	if ((file=Df1_open_device (argv[1], speed, parity, databits, stopbits)) == -1)
+	if ((file=Df1_open_device (device, speed, parity, databits, stopbits)) == -1)
 	{
 		MyLog("OpenCom Failed\n");
 		return (-1);
 	}
 
-	if((strcasecmp("half", argv[2])) == 0){
+	if((strcasecmp("half", mode)) == 0){
 		df1_mode = 1;
 	}
 
