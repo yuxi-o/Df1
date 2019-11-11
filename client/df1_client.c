@@ -22,7 +22,7 @@ int main(int argc, char* argv[])
 	char filetype[] = "OISBTCRNF";
 
 	if(!((argc == 3) || (argc == 4))){
-		fprintf(stdout, "Usage: %s server_ip addr[=value] [salve_addr]\n", argv[0]);
+		fprintf(stdout, "[v1.1.0] Usage: %s server_ip addr[=value] [salve_addr]\n", argv[0]);
 		exit(-6);
 	}
 

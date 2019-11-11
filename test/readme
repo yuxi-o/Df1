@@ -1,0 +1,9 @@
+Windows:
+GOOS=windows GOARCH=386 go build -o df1dev.exe df1dev.go
+or
+GOOS=windows GOARCH=amd64 go build -o df1dev.exe df1dev.go
+
+linux:
+GOOS=linux GOARCH=386 go build -o df1dev df1dev.go
+or
+GOOS=linux GOARCH=amd64 go build -o df1dev df1dev.go

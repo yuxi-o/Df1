@@ -47,6 +47,12 @@ int main (int argc, char *argv[])
 	openlog("DF1",LOG_NDELAY,LOG_DAEMON);
 	setlogmask(~LOG_MASK(LOG_DEBUG)); // no debug informations
 
+	MyLog("[v1.1.0] Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", argv[0]);
+	MyLog("mode: specify the mode , full or half, not using, just for the same.\n");
+	MyLog("speed: specify the bps, 115200, 57600, 9600, 4800, 2400...\n");
+	MyLog("parity: 0:none, 1:even, 2:odd\n");
+	MyLog("stopbits: 1 or 2\n");
+
 	if(!((argc == 7) || (argc == 1))){
 		MyLog( "Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", argv[0]);
 		return(-1);
