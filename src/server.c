@@ -51,19 +51,22 @@ int server(void)
 	}
 	
 	/* init sockets list*/
-	nfds = getdtablesize();
+//	nfds = getdtablesize();
+	nfds = serv_sock;
 	FD_ZERO(&afds);
 	FD_SET(serv_sock, &afds);
 
+	//MyLog("---------select...-----: %d\n", nfds);
 	/* gestion des clients */
 	while(!Terminated) 
 	{
 		memcpy(&rfds, &afds, sizeof(rfds));
-		if( select(nfds, &rfds, 0, 0, 0) == -1 ) 
+		if( select(nfds+1, &rfds, 0, 0, 0) == -1 ) 
 			{/* signaux non bloquants */
 				if( errno == EINTR ) continue;
 				return(1);
 			}
+	//	MyLog("---------select---------: %d\n", nfds);
 		if( FD_ISSET(serv_sock, &rfds) ) /* New connection ?*/
 			{
 				taille = sizeof sonadr;
@@ -75,9 +78,12 @@ int server(void)
 				fflush(stdout);
 				FD_SET(client_sock, &afds);
 				fcntl(client_sock, F_SETFL, O_NONBLOCK | fcntl(client_sock, F_GETFL, 0));
+				if(client_sock > nfds){
+					nfds = client_sock;
+				}
 			}
 		/* Tester si les sockets clientes ont boug�s */
-		for( fd=0; fd<nfds; fd++ ) {
+		for( fd=0; fd<=nfds; fd++ ) {
 			if( fd != serv_sock && FD_ISSET(fd, &rfds) ) {
 				/* traiter le client */
 				strcpy(message,"");
@@ -97,6 +103,7 @@ int server(void)
 				}
 			}
 		}
+		//MyLog("---------select------end: %d\n", nfds);
 	}
 	return(0);
 }

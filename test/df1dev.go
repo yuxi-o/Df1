@@ -34,7 +34,7 @@ func compute_crc(buf []byte, leng int)(crc uint16){
 }
 
 func main(){
-	fmt.Printf("Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", os.Args[0]);
+	fmt.Printf("[v1.1.1]Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", os.Args[0]);
 	fmt.Printf("mode: specify the mode , full or half, not using, just for the same.\n");
 	fmt.Printf("speed: specify the bps, 115200, 57600, 9600, 4800, 2400...\n");
 	fmt.Printf("databits: 7 or 8")
@@ -124,14 +124,18 @@ func main(){
 			txbuf[7] = rxbuf[index+7]
 			if rxbuf[index+8] == 0xA2 { // FNC: A2, to read
 				count = int(rxbuf[index+9])
-				for i =0; i < count; i++ { // the count of bytes to read
-					txbuf[8+i] = byte(0x1 + i)
+				txbuf[8] = 0x65; 
+				txbuf[9] = 0x0;
+				txbuf[10] = 0xC8;
+				txbuf[11] = 0x42;
+				for i =4; i < count; i++ { // the count of bytes to read
+					txbuf[8+i] = byte(11 + i)
 				}
 				num = 6 + count
 			} else if (rxbuf[index+8] == 0xAA) || (rxbuf[index+8] == 0xAB) { //FNC: AA, to write
 				num = 6
 			} else {
-				fmt.Println("Not support FNC: 0x%.2X\n", rxbuf[index+8])
+				fmt.Printf("Not support FNC: 0x%.2X\n", rxbuf[index+8])
 				break	
 			}
 
@@ -148,7 +152,7 @@ func main(){
 				_, err = s.Write(txbuf[:num])
 			}
 			fmt.Printf("Send %d data:\n0x10 0x06\n%q\n", num+2, txbuf[:num])
-			fmt.Println("--------------------")
+			fmt.Printf("---------[5:0x%X] [6:0x%X] [7:0x%X]-----------\n", txbuf[5], txbuf[6], txbuf[7])
 			break
 		}
 	}
