@@ -142,10 +142,10 @@ int Df1_open_device(char Df1_port[20], int Df1_speed, int Df1_parity, int Df1_bi
   }
   switch (Df1_parity)
   {
-     case 1:
+     case 2:
         Df1_tio.c_cflag = Df1_tio.c_cflag | PARENB;
         break;
-     case 2:
+     case 1:
         Df1_tio.c_cflag = Df1_tio.c_cflag | PARENB | PARODD;
         break;
      case 0:

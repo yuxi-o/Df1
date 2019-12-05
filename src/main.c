@@ -47,10 +47,10 @@ int main (int argc, char *argv[])
 	openlog("DF1",LOG_NDELAY,LOG_DAEMON);
 	setlogmask(~LOG_MASK(LOG_DEBUG)); // no debug informations
 
-	MyLog("[v1.1.0] Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", argv[0]);
+	MyLog("[v1.1.1] Usage: %s /dev/ttyxxx mode speed databits parity stopbits\n", argv[0]);
 	MyLog("mode: specify the mode , full or half, not using, just for the same.\n");
 	MyLog("speed: specify the bps, 115200, 57600, 9600, 4800, 2400...\n");
-	MyLog("parity: 0:none, 1:even, 2:odd\n");
+	MyLog("parity: 0:none, 1:odd, 2:even\n");
 	MyLog("stopbits: 1 or 2\n");
 
 	if(!((argc == 7) || (argc == 1))){
@@ -64,9 +64,9 @@ int main (int argc, char *argv[])
 
 	if(argc == 7){
 		speed = atoi(argv[3]);
-		databits = argv[4][1] - '0';
-		parity = argv[5][1] - '0';
-		stopbits = argv[6][1] - '0';
+		databits = argv[4][0] - '0';
+		parity = argv[5][0] - '0';
+		stopbits = argv[6][0] - '0';
 		strncpy(device, argv[1], sizeof(device));
 		strncpy(mode, argv[2], sizeof(mode));
 	} else {
